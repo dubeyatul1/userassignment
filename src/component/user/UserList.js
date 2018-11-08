@@ -54,7 +54,7 @@ class UserList extends Component {
               <td>{user.phone}</td>
               <td>{user.address}</td>
               <td>
-                <i className="fa fa-times" aria-hidden="true" onClick={(e) => this.handleDelete(user._id)}></i>
+                {(user.email !== 'admin@gmail.com')?(<i className="fa fa-times" aria-hidden="true" onClick={(e) => this.handleDelete(user._id)}></i>):<i class="fa fa-ban" aria-hidden="true"></i>}
               </td>
             </tr>
             ))
