@@ -10,6 +10,7 @@ export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
 export const USER_LOADING = 'USER_LOADING';  
 export const USER_FAILURE = 'USER_FAILURE'; 
 export const USER_REMOVE = 'USER_REMOVE';
+export const USER_UPDATE = 'USER_UPDATE';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';

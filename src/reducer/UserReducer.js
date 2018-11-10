@@ -30,8 +30,7 @@ export const UserReducer = (state = InitialState.users, action) => {
       return {...state, isLoading: false, data: action.users};
     case ActionTypes.USERS_LOADING:
       return {...state, isLoading: true, errMess: null, users: []}   
-    case ActionTypes.USER_REMOVE:  
-    console.log(state.data)  
+    case ActionTypes.USER_REMOVE:
       return {...state, isLoading: false, data: state.data.filter((val) => val._id !== action.id)};   
     default: 
       return state;
@@ -43,6 +42,8 @@ export const UserReducer = (state = InitialState.users, action) => {
       case ActionTypes.USER_LOADING:
       return {...state, isLoading: true, data: []};
     case ActionTypes.LOAD_USER_SUCCESS:
+      return {...state, isLoading: false, data: action.userProfile};
+    case ActionTypes.USER_UPDATE:
       return {...state, isLoading: false, data: action.userProfile};
     default: 
       return state;

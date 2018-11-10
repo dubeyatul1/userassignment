@@ -89,6 +89,43 @@ export const createUsers = user => {
   };
 };
 
+//Update user
+/**
+ * 
+ * @param {user id} id 
+ */
+
+export const updateUserByIdSuccess = userProfile => ({
+  type: ActionTypes.USER_UPDATE,
+  userProfile
+});
+
+
+/**
+ * 
+ * @param {User ID} userId 
+ * @param {Form field to update} data 
+ */
+export const updateUser = (userId,data, lastImage) => dispatch => {
+  auth(true);
+  return fetch(baseUrl + "users/user/" + userId, {
+    method: "put",
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      "profile" :  data
+    })
+  })
+  .then(response => response.json())
+  .then(userProfile => dispatch(updateUserByIdSuccess(userProfile)))
+  .then(() => deletFile(lastImage));
+};
+
+const deletFile = (fileName) => {
+  return fetch(baseUrl + "uploadfile/file/" + fileName, {
+    method: "delete"
+  });
+  // console.log(9879878);
+}
 const requestLogin = creds => {
   return {
     type: ActionTypes.LOGIN_REQUEST,

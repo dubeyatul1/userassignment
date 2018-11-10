@@ -5,7 +5,8 @@ import { post } from 'axios';
 import { Header, Sidebar, Breadcrumb, Footer } from "../shared/Common";
 import { baseUrl } from "../../baseUrl";
 import { Loading } from "../shared/LoadingComponent";
-import { fetchUserById } from "../../action/UserAction";
+import { fetchUserById, updateUser } from "../../action/UserAction";
+
 const mapStateToProps = state => {
   return {
     user: state.userProfile
@@ -13,39 +14,41 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  fetchUserById: userId => dispatch(fetchUserById(userId))
+  fetchUserById: userId => dispatch(fetchUserById(userId)),
+  updateUser: (userId, userField,lastImage) => dispatch(updateUser(userId, userField, lastImage))
 });
-class UserProfile extends Component {
 
+class UserProfile extends Component {
   constructor(props) {
     super(props);
     this.state ={
       file:null,
-      imageURL: '',
-    }
-    
-    this.onFormSubmit = this.onFormSubmit.bind(this)
-    this.onChange = this.onChange.bind(this)
-    this.fileUpload = this.fileUpload.bind(this)
+      imageURL: 'b99ac35e772bd1561018d5f476833caa.png',
+      lastImage:''
+    }  
+    this.fileUpload = this.fileUpload.bind(this);
   }
 
   componentDidMount() {
     this.props.fetchUserById(this.props.match.params.userId);
   }
 
-
   onFormSubmit(e){
     e.preventDefault() // Stop form submit
+    // console.log('profile', profile);
     this.fileUpload(this.state.file).then((response)=>{
-      console.log(response.data);
-      this.setState({ imageURL: `${baseUrl}${response.data.filename}` });
+      this.props.updateUser(this.props.match.params.userId, response.data.file.filename, this.state.lastImage);      
+      this.setState({imageURL:response.data.file.filename});      
     })
   }
   onChange(e) {
-    this.setState({file:e.target.files[0]})
+    this.setState({file:e.target.files[0]});
+    console.log(e.target.id);
+    this.setState({lastImage:e.target.id});
   }
+
   fileUpload(file){
-    const url = baseUrl+'upload';
+    const url = baseUrl+'uploadfile';
     const formData = new FormData();
     formData.append('file',file)
     const config = {
@@ -53,11 +56,10 @@ class UserProfile extends Component {
             'content-type': 'multipart/form-data'
         }
     }
-    return  post(url, formData,config)
+    return  post(url, formData,config);
   }
 
-  render() {
-    
+  render() {    
     this.dataArray = this.props.user.userProfile;
     let renderUser;
     if (this.dataArray.isLoading || this.dataArray.isLoading === "undefined") {
@@ -82,7 +84,7 @@ class UserProfile extends Component {
         </table>
       );
     } else if (this.dataArray.isLoading === false) {
-      // console.log(this.dataArray.data);
+      let profile = (this.dataArray.data.profile)?this.dataArray.data.profile:this.state.imageURL;
       renderUser = (       
         <table
           className="table table-bordered"
@@ -93,12 +95,15 @@ class UserProfile extends Component {
           <tbody>
             <tr>
               <td rowSpan="4" colSpan="2">
-              <img src="http://localhost:3001/public/uploads/profile/avatar-1541153576163.JPG" alt="img" width="400" height="400"/> 
-              <form onSubmit={this.onFormSubmit}>
-                    <h1>File Upload</h1>
-                    <input type="file" onChange={this.onChange} />
+              <img src={`${baseUrl}uploadfile/image/${profile}`} alt="img" width="400" height="400"/> 
+              <form onSubmit={this.onFormSubmit.bind(this)}>
+                    <h3>Change image</h3>
+                    <input
+                     type="file" 
+                     onChange={this.onChange.bind(this)}
+                     id={this.dataArray.data.profile} />
                     <button type="submit">Upload</button>
-                  </form>        
+              </form>        
               </td>               
               <th>Name: </th>
               <td>{this.dataArray.data.name}</td>
